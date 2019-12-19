@@ -411,7 +411,7 @@ sites.south.temp2.rda <- scores(south.temp2.rda, display = "sites", choices = 1)
 # sh.temp2 <- read.csv("sites.south.temp2.rda.csv")
 sh.temp2 <- sites.south.temp2.rda
 head(sh.temp2)
-# temp.comp  contains only PC2
+# temp.comp  contains only PC1
 
 dev.new(width = 12,
         height = 6,
