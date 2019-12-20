@@ -19,13 +19,13 @@ library(rgl)
 
 
 #----------------------------DCA and PCA on species data-------------------------------------------#
-macros5 <- read.csv("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/DataLD/combined_macros_shorted(5).csv")
+# macros5 <- read.csv("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/DataLD/combined_macros_shorted(5).csv")
 macros5 <- read.csv("/Users/giselleastorga/Google Drive/Lake Dobson/plant-macros/DataLD/combined_macros_shorted(5).csv")
 
 str(macros5)
 summary(macros5)
 macros.log <- log1p(macros5)# computes log(1+x)
-decorana(macros5, iweigh = 1, ira = 0)
+decorana(macros.log, iweigh = 1, ira = 0)
 # DCA performed on log(raw count data). 80 samples 52 species including individual conifer abundances
 # argument ira = 0 for detrending and iweight = 1 for downweighting of rare species
 # DCA2 2.9 DCA2 2.2
@@ -242,6 +242,10 @@ head(clim.complete)
 # Patterns of correlations among env.var
 (cor(clim.complete, use = "pairwise.complete.obs"))
 
+library(corrplot)
+cor.env <- cor(clim.complete)
+corrplot(cor.env, method = "circle")
+
 antar.temp <- cbind(vos.interp.temp, dome.interp.temp)
 head(antar.temp)
 is.data.frame(antar.temp)
@@ -268,8 +272,6 @@ temp.rda$CA
 ev.antar.temp <- temp.rda$CA$eig
 source("/Users/giselleastorga/Google Drive/Lake Dobson/plant-macros/FunctionsLD/evplot.R")
 # source("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/FunctionsLD/evplot.R")
-# source ('http://www.davidzeleny.net/anadat-r/doku.php/en:numecolr:evplot?do=export_code&codeblock=2')
-
 dev.new()
 # pdf("ev.pdf")
 
@@ -280,7 +282,10 @@ evplot(ev.antar.temp)
 sites.temp.antar <- scores(temp.rda, display = "sites", choices = 1)
 head(sites.temp.antar)
 temp.antar <- sites.temp.antar
+is.data.frame(temp.antar)
+temp.antar<- as.data.frame(temp.antar)
 head(temp.antar)   #only PC1
+PC1.ant.temp <-temp.antar$PC1
 
 source("/Users/giselleastorga/Google Drive/Lake Dobson/plant-macros/FunctionsLD/cleanplot.pca.R")
 # source("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/FunctionsLD/cleanplot.pca.R")
@@ -301,8 +306,8 @@ cleanplot.pca(temp.rda, scaling = 2, mar.percent = 0.04)
 # Arguments scale = TRUE and centre = TRUE calls for a standardization of the variables
 # antar.temp include the Vostok and DomeC variacion de deuterium data
 
-# sh.temp: Antartic & NZW.O18 together like in the Thesis, non-including C13.nzw
-
+#---------------------Antartic & NZW.O18 together like in the Thesis-----------------------------#
+# non-including 13C
 southern.temp <- cbind(antar.temp, NZW.interp)
 head(southern.temp)
 southern.temp <- subset(southern.temp, select = -c(4))
@@ -323,16 +328,15 @@ screeplot(south.temp.rda, bstick = TRUE)
 
 ev.south.temp <- south.temp.pca$sdev^2
 # pdf("ev.pdf")
-
 dev.new()
 evplot(ev.south.temp)
 
 # only PC1 is significant
 sites.south.temp.rda <- scores(south.temp.rda, choices = c(1), display = "sites")
-# write.csv(sites.south.temp.rda, file = "sites.south.temp.rda.csv")
-# sh.temp <- read.csv("sites.south.temp.rda.csv")
 sh.temp <-sites.south.temp.rda
 head(sh.temp)
+sh.temp <- as.data.frame(sh.temp)
+PC1.sh.temp <- sh.temp$PC1
 
 dev.new(width = 12,
         height = 6,
@@ -343,7 +347,7 @@ par(mfrow = c(1, 2))
 cleanplot.pca(south.temp.rda, scaling = 1, mar.percent = 0.08)
 cleanplot.pca(south.temp.rda, scaling = 2, mar.percent = 0.04)
 
-# sh.temp1: Antartic + NZW complete
+#----------------------------sh.temp1: Antartic + NZW complete------------------------------#
 
 southern.temp1 <- cbind(antar.temp, NZW.interp)
 head(southern.temp1)
@@ -364,7 +368,6 @@ screeplot(south.temp.rda1, bstick = TRUE)
 
 ev.south.temp1 <- south.temp.pca1$sdev^2
 # pdf("ev.pdf")
-
 dev.new()
 evplot(ev.south.temp1)
 # still only PC1 is significant
@@ -372,6 +375,8 @@ evplot(ev.south.temp1)
 sites.south.temp.rda1 <- scores(south.temp.rda1, choices = c(1), display = "sites")
 sh.temp1 <-sites.south.temp.rda1
 head(sh.temp1)
+sh.temp1<- as.data.frame(sh.temp1)
+PC1.sh.temp1 <- sh.temp1$PC1
 
 dev.new(width = 12,
         height = 6,
@@ -382,7 +387,7 @@ par(mfrow = c(1, 2))
 cleanplot.pca(south.temp.rda1, scaling = 1, mar.percent = 0.08)
 cleanplot.pca(south.temp.rda1, scaling = 2, mar.percent = 0.04)
 
-# Analysis runned with data from Port Arthur, including only O18
+#----------------------------Antartic records + O18 from Port Arthur-------------------------------#
 # I dont think this is correct, becasue O18 from Port Arthur
 # does not represent temerature, but instead meteoric water 
 # 13C represent changes in forest productivitym matching paleovegetation records
@@ -406,7 +411,6 @@ screeplot(south.temp2.rda, bstick = TRUE)
 
 # select the data frame with eigenvalues of particular axes:
 ev.south.temp2 <- south.temp2.pca$sdev^2
-
 # pdf("ev.pdf")
 dev.new()
 evplot(ev.south.temp2)
@@ -416,6 +420,8 @@ sites.south.temp2.rda <- scores(south.temp2.rda, display = "sites", choices = 1)
 sh.temp2 <- sites.south.temp2.rda
 head(sh.temp2)
 # temp.comp  contains only PC1
+sh.temp2 <- as.data.frame(sh.temp2)
+PC1.sh.temp2 <- sh.temp2$PC1
 
 dev.new(width = 12,
         height = 6,
@@ -429,7 +435,8 @@ cleanplot.pca(south.temp2.rda, scaling = 2, mar.percent = 0.04)
 #  it is weird how NZW and NZA points towards the oldest sites from Lake Dobson
 #  could it be because the 2 records represent precipitation values instead of temperature?
 
-#--------------------------------O18 from nza and nzw------------------------------------- 
+#--------------------------------Antartic records + O18 from nza and nzw---------------------------# 
+
 NZ.isotopes <- cbind(NZW.interp, NZA.interp)
 head(NZ.isotopes)
 O18.nz <- subset(NZ.isotopes, select = -c(2,4))
@@ -463,6 +470,8 @@ sites.O18.rda <- scores(O18.rda, display = "sites", choices = 1)
 O18.sh <- sites.O18.rda
 head(O18.sh)
 # temp.comp  contains only PC2
+O18.sh<- as.data.frame(O18.sh)
+PC1.sh.O18 <- O18.sh$PC1
 
 dev.new(width = 12,
         height = 6,
@@ -497,6 +506,8 @@ evplot(ev.C13)
 sites.C13.rda <- scores(C13.rda, display = "sites", choices = 1)
 C13.sh <- sites.C13.rda
 head(C13.sh)
+C13.sh<- as.data.frame(C13.sh)
+PC1.sh.C13 <- C13.sh$PC1
 
 dev.new(width = 12,
         height = 6,
@@ -507,7 +518,7 @@ par(mfrow = c(1, 2))
 cleanplot.pca(C13.rda, scaling = 1, mar.percent = 0.08)
 cleanplot.pca(C13.rda, scaling = 2, mar.percent = 0.04)
 
-# ------------------------antartic data and O18 isotopes from nzw and nza--------------------------#
+# ------------------------Antartic data and O18 isotopes from nzw and nza--------------------------#
 
 southern.climate1 <- cbind(antar.temp, NZW.interp, NZA.interp)
 head(southern.climate1)
@@ -531,7 +542,6 @@ Scree.Plot(R, main ="Scree Plot (Environmental variables)") # only PC1 is import
 
 # select the data frame with eigenvalues of particular axes:
 ev <- south.climate1.rda$CA$eig
-
 # pdf("ev.pdf")
 dev.new()
 evplot(ev)
@@ -540,6 +550,8 @@ evplot(ev)
 sites.south.climate1.rda <- scores(south.climate1.rda, choices = c(1), display = "sites")
 sh.climate1 <- sites.south.climate1.rda
 head(sh.climate1)
+sh.climate1 <- as.data.frame(sh.climate1)
+PC1.sh.clim1 <- sh.climate1$PC1
 
 dev.new(width = 12,
         height = 6,
@@ -550,7 +562,7 @@ par(mfrow = c(1, 2))
 cleanplot.pca(south.climate1.rda, scaling = 1, mar.percent = 0.08)
 cleanplot.pca(south.climate1.rda, scaling = 2, mar.percent = 0.04)
 
-# ---------------------------antartic + nzw &nza complete---------------------------------#
+# ---------------------------Antartic + nzw & nza complete---------------------------------#
 
 southern.climate2 <- cbind(antar.temp, NZW.interp, NZA.interp)
 head(southern.climate2)
@@ -569,11 +581,10 @@ screeplot(south.climate2.rda, bstick = TRUE)
 
 R <- cor(southern.climate2[,1:6])
 Scree.Plot(R,main ="Scree Plot (Environmental variables)")
-# PC1 & PC2 area significant, which is consistent with Kaiser-Guntamman
+# PC1 & PC2 are significant
 
 # select the data frame with eigenvalues of particular axes:
 ev <- south.climate2.rda$CA$eig
-
 # pdf("ev.pdf")
 dev.new()
 evplot(ev)
@@ -583,6 +594,9 @@ evplot(ev)
 sites.south.climate2.rda <- scores(south.climate2.rda, choices = c(1:2), display = "sites")
 sh.climate2 <- sites.south.climate2.rda
 head(sh.climate2)
+sh.climate2 <- as.data.frame(sh.climate2)
+PC1.sh.clim2 <- sh.climate2$PC1
+PC2.sh.clim2 <- sh.climate2$PC2
 
 dev.new(width = 12,
         height = 6,
@@ -619,7 +633,7 @@ screeplot(south.climate3.rda, bstick = TRUE)
 
 R <- cor(southern.climate3[,1:5])
 Scree.Plot(R,main ="Scree Plot (Environmental variables)")
-# Two first PCA are significant, which is consitent with Kaiser-Guntmman criterion
+# Two first PCA are significant, althoug PC2 is just above the red line
 
 # select the data frame with eigenvalues of particular axes:
 ev <- south.climate3.rda$CA$eig
@@ -627,12 +641,15 @@ ev <- south.climate3.rda$CA$eig
 # pdf("ev.pdf")
 dev.new()
 evplot(ev)
-# first two PC are significant when running the analysis with O28 and C24 
+# first two PC are significant when running the analysis with O18 and C13 
 # isotopes data from nzw and nza
 
 sites.south.climate3.rda <- scores(south.climate3.rda, choices = c(1:2), display = "sites")
 sh.climate3 <- sites.south.climate3.rda
 head(sh.climate3)
+sh.climate3 <- as.data.frame(sh.climate3)
+PC1.sh.clim3 <- sh.climate3$PC1
+PC2.sh.clim3 <- sh.climate3$PC2
 
 dev.new(width = 12,
         height = 6,
@@ -648,7 +665,8 @@ clim.complete1 <- cbind(PC1.ant.temp, PC1.sh.temp, PC1.sh.temp1, PC1.sh.temp2, P
                         char.interp, et.interp, chiro.interp, PC1.sh.O18)
 head(clim.complete1)
 is.data.frame(clim.complete1)
-as.data.frame(clim.complete1)
+clim.complete1 <- as.data.frame(clim.complete1)
+
 #----------------------------------------individual cca--------------------------------------------#
 # Individual CCA with each variable log1p(macros); 80 columns 52 variables
 # macros5 <- read.csv("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/DataLD/combined_macros_shorted(5).csv")
@@ -662,7 +680,6 @@ str(macros.short)
 macros.short.log <- log2p(macros.short)
 
 head(clim.complete1)
-clim.complete1 <- as.data.frame(clim.complete1)
 antar.mod <- cca (macros.log ~ PC1.ant.temp, data = clim.complete1)
 antar.mod
 summary(antar.mod)
@@ -682,7 +699,7 @@ head(clim.complete1)
 sh.temp.mod <- cca (macros.log ~ PC1.sh.temp, data = clim.complete1)
 sh.temp.mod
 summary(sh.temp.mod)
-# vostok temperature record explains about 12% (12.35%) of the total variability
+# sh.temp (antartic + O18.nzw) explains about 12% (12.35%) of the total variability
 (anova(sh.temp.mod,  permutations = control))
 
 #          Df ChiSquare      F  Pr(>F)   
@@ -695,7 +712,7 @@ head(clim.complete1)
 sh.temp1.mod <- cca (macros.log ~ PC1.sh.temp1, data = clim.complete1)
 sh.temp1.mod
 summary(sh.temp1.mod)
-# vostok temperature record explains about 12% (11.54%) of the total variability
+# sh.temp1 (antartic + nzw complete) explains about 12% (11.54%) of the total variability
 (anova(sh.temp1.mod,  permutations = control))
 
 #          Df ChiSquare      F  Pr(>F)   
@@ -707,7 +724,7 @@ summary(sh.temp1.mod)
 sh.temp2.mod <- cca(macros.log ~ PC1.sh.temp2, data = clim.complete1)  
 sh.temp2.mod 
 summary(sh.temp2.mod )
-# sh.clim.3 PC1 & PC2 explains about ~13% (12.52%) of the constrained variability
+# sh.temp2 PC1 explains about ~13% (12.52%) of the constrained variability
 (anova(sh.temp2.mod,  permutations = control))
 #           Df ChiSquare      F Pr(>F)    
 # Model     2   0.39971 6.704 0.00625 **
@@ -719,7 +736,7 @@ head(clim.complete1)
 sh.clim1.mod <- cca(macros.log ~ PC1.sh.clim1, data = clim.complete1)  
 sh.clim1.mod
 summary(sh.clim1.mod)
-# sh.clim4 CCA1 & CCA2 explains about ~13% (12.91%) of the constrained variability
+# sh.clim1 CCA1 explains about ~13% (12.91%) of the constrained variability
 (anova(sh.clim1.mod,  permutations = control))
 
 #          Df ChiSquare      F  Pr(>F)   
@@ -732,7 +749,7 @@ head(clim.complete1)
 sh.clim2.mod <- cca(macros.log ~ PC1.sh.clim2 + PC2.sh.clim2, data = clim.complete1)  
 sh.clim2.mod
 summary(sh.clim2.mod)
-# sh.clim1 using PCA1 & PCA2 explains about ~15% (14.83%) of the constrained variability
+# sh.clim2 using PCA1 & PCA2 explains about ~15% (14.83%) of the constrained variability
 # PC1.sh.clim2 explains 12.51% of the constrained variability
 
 (anova(sh.clim2.mod,  permutations = control))
@@ -916,8 +933,6 @@ fviz_contrib(clim3.pca, choice = "var", axes = 1, top = 10)
 fviz_contrib(clim3.pca, choice = "var", axes = 2, top = 10)
 fviz_contrib(clim3.pca, choice = "var", axes = 1:2, top = 10)
 
-
-
 # clim.complete4 includes PC1.sh.temp, co21, loi1, char1, temp.et1, dca1.dob
 head(clim.complete2)
 clim.complete4 <- subset(clim.complete2, select = -c(1, 3:9, 15:16))
@@ -1025,6 +1040,10 @@ fviz_pca_var(clim5.pca, col.var = "cos2",
              gradient.cols = c("#00AFBB", "#E7B800", "#FC5E07"), 
              repel = TRUE # Avoid text overlapping
 )
+# Temp1.et and dca1.dob perfectly overlap, but also temp1.et is the shorter env. vector 
+# PC1.sh.temp1 and dca1.dob are highly correlated, although the local variable is closer to the  
+# circle meaning is better represented in PC1 (0.93 vs. a.50)
+
 # Contributions of variables to PCs
 head(var.clim5$contrib, 6)
 dev.new()
@@ -1036,6 +1055,45 @@ fviz_contrib(clim5.pca, choice = "var", axes = 1, top = 6)
 # Contributions of variables to PC2
 fviz_contrib(clim5.pca, choice = "var", axes = 2, top = 6)
 fviz_contrib(clim5.pca, choice = "var", axes = 1:2, top = 6)
+
+# clim.complete6 includes PC1.sh.temp1, co21, loi1, char1, temp.et1, dca1.dob
+# PC1.sh.temp 1 is antartic and nzw complete (O18 & C13 isotopes)
+head(clim.complete2)
+clim.complete6 <- subset(clim.complete2, select = -c(1:3, 5:9, 15:16))
+head(clim.complete6)
+clim.complete6 <- as.data.frame(clim.complete6)
+clim6.pca <- PCA(clim.complete6, scale.unit = TRUE, graph = FALSE)
+
+eig.val <- get_eigenvalue(clim6.pca)
+eig.val
+dev.new()
+fviz_eig(clim6.pca, addlabels = TRUE, ylim = c(0, 80))
+var.clim6 <- get_pca_var(clim6.pca)
+var.clim6
+head(var.clim6$coord, 6)
+fviz_pca_var(clim6.pca, col.var = "black")
+
+head(var.clim6$cos2, 6)
+dev.new()
+corrplot(var.clim6$cos2, is.corr = FALSE)
+
+dev.new()
+fviz_pca_var(clim6.pca, col.var = "cos2",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC5E07"), 
+             repel = TRUE # Avoid text overlapping
+)
+
+# Contributions of variables to PCs
+head(var.clim6$contrib, 6)
+dev.new()
+corrplot(var.clim6$contrib, is.corr =F) 
+
+# Contributions of variables to PC1
+dev.new()
+fviz_contrib(clim6.pca, choice = "var", axes = 1, top = 6)
+# Contributions of variables to PC2
+fviz_contrib(clim6.pca, choice = "var", axes = 2, top = 6)
+fviz_contrib(clim6.pca, choice = "var", axes = 1:2, top = 6)
 
 #-------------------------------------Defining final model-----------------------------------------#
 # add1(m0, scope=formula(mbig), test = c("permutation"), 
@@ -1147,31 +1205,30 @@ m0 <- update(m0, . ~ . + co21)
 add1(m0, scope = formula(mbig), test = "permutation")
 m0 <- update(m0, . ~ . + PC1.sh.temp)
 add1(m0, scope = formula(mbig), test = "permutation")
-m0 <- update(m0, . ~ . + loi1)
-add1(m0, scope = formula(mbig), test = "permutation")
 
 ## -- included variables still significant?
 
-final.mod2 <- cca(macros.log ~  dca1.dob + co21 + PC1.sh.temp + 
-                    temp.et1 , clim.complete4)
+final.mod2 <- cca(macros.log ~  dca1.dob + co21 + PC1.sh.temp 
+                    , clim.complete4)
 final.mod2
 #               Inertia Proportion Rank
 # Total          2.6952     1.0000     
-# Constrained    0.5323     0.1975    4
-# Unconstrained  2.1628     0.8025   51
+# Constrained    0.4896     0.1817    3
+# Unconstrained  2.2056     0.8183   51
 # Inertia is scaled Chi-square 
 
 summary(final.mod2)
 # Accumulated constrained eigenvalues
 # Importance of components:
 #                         CCA1   CCA2    CCA3    CCA4    CCA5
-# Eigenvalue            0.3632 0.1080 0.03298 0.02816
-# Proportion Explained  0.6822 0.2029 0.06196 0.05290
-# Cumulative Proportion 0.6822 0.8851 0.94710 1.00000
+# Eigenvalue            0.3630 0.09593 0.03069
+# Proportion Explained  0.7414 0.19594 0.06269
+# Cumulative Proportion 0.7414 0.93731 1.00000
+
 
 vif.cca(final.mod2)
-# dca1.dob       co21  PC1.sh.temp    temp.et1 
-# 6.497104    4.947425    5.371197    1.495513 
+# dca1.dob        co21 PC1.sh.temp 
+# 5.846661    4.907481    5.260713 
 
 spe.cca1 <- cca(macros.log ~., clim.complete4)
 summary(spe.cca1)
@@ -1338,13 +1395,25 @@ vif.cca(mod3.pars.cca)
 # sites are weighted averages of the species
 dev.new()
 par(mfrow = c(2,2))
-plot(mod3.pars.cca, scaling = 2, display = c("sp", "lc", "cn"),
-     main ="Triplot CCA macros.log ~ clim.complete3 - Scaling 1")
-# Default scaling 2: site scores sclaed to the relative eigenvalues,
-# species are weigjted averages of the sites
-plot(spe.cca.pars,
-     display = c("lc", "cn"),
-     main = "Triplot CCA macros.log ~ clim.complete3 - Scaling 1")
+
+## CCA triplots (using lc site scores)
+# Scaling 1: species scores scaled to relative eigenvalues, 
+# sites are weighted averages of the species
+quartz(title = "CCA triplot - scaling 1 - lc scores", 9, 9)
+plot(mod3.pars.cca, scaling = 1, display = c("sp","lc","cn"), 
+     main="Triplot CCA spe ~ clim5 - scaling 1")
+
+# Default scaling 2: site scores scaled to relative eigenvalues, 
+# species are weighted averages of the sites
+quartz(title="CCA triplot - scaling 2 - lc scores", 9, 9)
+plot(mod3.pars.cca, display=c("sp","lc","cn"), 
+     main="Triplot CCA spe ~ clim5 - scaling 2")
+
+# CCA scaling 1 biplot without species (using lc site scores)
+quartz(title = "CCA biplot - scaling 1", 9, 9)
+plot(mod3.pars.cca, scaling = 1, display = c("lc", "cn"), 
+     main="Biplot CCA spe ~ clim5 - scaling 1")
+
 
 
 
