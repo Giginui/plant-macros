@@ -17,7 +17,6 @@ library(nlme)
 library(ggplot2)
 library(rgl)
 
-
 #----------------------------DCA and PCA on species data-------------------------------------------#
 macros5 <- read.csv("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/DataLD/combined_macros_shorted(5).csv")
 # macros5 <- read.csv("/Users/giselleastorga/Google Drive/Lake Dobson/plant-macros/DataLD/combined_macros_shorted(5).csv")
