@@ -32,8 +32,8 @@ decorana(macros5, iweigh = 1, ira = 0)
 
 #-------------------------------------Interpolate---------------------------------------------------#
 # a try with antartic data with AICC2022
-dobson <- read.csv("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/DataLD/dobson.csv")
-# dobson <- read.csv("/Users/giselleastorga/Google Drive/Lake Dobson/plant-macros/DataLD/dobson.csv")
+# dobson <- read.csv("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/DataLD/dobson.csv")
+dobson <- read.csv("/Users/giselleastorga/Google Drive/Lake Dobson/plant-macros/DataLD/dobson.csv")
 
 head(dobson)
 dob.depth <- dobson$depth
