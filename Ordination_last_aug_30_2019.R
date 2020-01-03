@@ -70,8 +70,8 @@ dob.age <- dobson$age
 # AICC2022 (icecores_data_on_AICC2022.xlsx). I could use the whole chronology proposed for EDC in 
 # 2025 version of the AICC2022 chronology, but we will see the fit with the composite 
 # chronology is better.
-antartic <- read.csv("/Users/giselleastorga/Google Drive/Lake Dobson/plant-macros/DataLD/Antartic_data.csv")
-# antartic <- read.csv("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/DataLD/Antartic_data.csv")
+# antartic <- read.csv("/Users/giselleastorga/Google Drive/Lake Dobson/plant-macros/DataLD/Antartic_data.csv")
+antartic <- read.csv("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/DataLD/Antartic_data.csv")
 head(antartic)
 age.dome <- antartic$age_dome
 temp.dome1 <- antartic$temp_dome
@@ -132,8 +132,8 @@ co2.stand <- co2.stand$co21
 
 #---------------------------------Eagle Tarn interpolation-----------------------------------------#
 # interpolated to Dobson ages
-Eagle <- read.csv("/Users/giselleastorga/Google Drive/Lake Dobson/plant-macros/DataLD/Eagle_TWARM.csv", header=TRUE, sep=";")
-# Eagle <- read.csv("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/DataLD/Eagle.csv")
+# Eagle <- read.csv("/Users/giselleastorga/Google Drive/Lake Dobson/plant-macros/DataLD/Eagle_TWARM.csv", header=TRUE, sep=";")
+Eagle <- read.csv("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/DataLD/Eagle.csv")
 head(Eagle)
 age.et <- Eagle$age
 temp.et1 <- Eagle$TWARM
@@ -143,18 +143,17 @@ et.interp <- interp.dataset(y = temp.et, x = age.et, xout = dob.age)
 head(et.interp)
 et.interp <- subset(et.interp, select = -c(2))
 head(et.interp)
-is.data.frame(et.interp)
-et.interp <-as.data.frame(et.interp)
-et.interp <- et.interp$temp.et1
+et.interp <- as.data.frame(et.interp)
 et.stand <- decostand(et.interp, method = "standardize")
+et.interp <- et.interp$temp.et1
 et.stand <- et.stand$temp.et1
 
 #------------------------------Lake Dobson Chironomids interpolation-------------------------------#
 # I should not interpolated to the LD age, because chironomids are from the same core as the macros
 # In the original data from A. Rees depth 945 had an age of 24879, but I calculate my own 
 # age-depth model. I could interpolated to the LD depths of plant macros
-chiro_dob <- read.csv("/Users/giselleastorga/Google Drive/Lake Dobson/plant-macros/DataLD/Chiro_Dob.csv", sep = ",")
-# chiro_dob <- read.csv("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/DataLD/Chiro_Dob.csv", sep = ",")
+# chiro_dob <- read.csv("/Users/giselleastorga/Google Drive/Lake Dobson/plant-macros/DataLD/Chiro_Dob.csv", sep = ",")
+chiro_dob <- read.csv("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/DataLD/Chiro_Dob.csv", sep = ";")
 head(chiro_dob)
 age.chiro <- chiro_dob$age
 depth.chiro <- chiro_dob$depth
@@ -173,8 +172,8 @@ chiro.stand <- chiro.stand$dca1.dob
 #---------------------------------------NZ isotopes interpolation----------------------------------#
 # Speleothem data from NW South Island NZ Williams 2005
 # Updated 20/03/2008
-NZW <- read.csv("/Users/giselleastorga/Google Drive/Lake Dobson/plant-macros/DataLD/NZW_both_isotopes.csv")
-# NZW <- read.csv("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/DataLD/NZW_both_isotopes.csv")
+# NZW <- read.csv("/Users/giselleastorga/Google Drive/Lake Dobson/plant-macros/DataLD/NZW_both_isotopes.csv")
+NZW <- read.csv("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/DataLD/NZW_both_isotopes.csv")
 head(NZW)
 age.NZW = NZW$age
 O18.nzw = NZW$nzw_18O
@@ -202,8 +201,8 @@ C13.nzw.stand <- NZW.stand$C13.nzw
 # to the NZ one? 
 # Carbon isotope variations in the speleothems record, represent changes in forest productivity,
 # closely matching existing paleovegetation records in NZ according to Hellstrom 2998.
-NZA <- read.csv("/Users/giselleastorga/Google Drive/Lake Dobson/plant-macros/DataLD/NZ.arthur.csv")
-# NZA <- read.csv("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/DataLD/NZ.arthur.csv")
+# NZA <- read.csv("/Users/giselleastorga/Google Drive/Lake Dobson/plant-macros/DataLD/NZ.arthur.csv")
+NZA <- read.csv("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/DataLD/NZ.arthur.csv")
 head(NZA)
 age.nza = NZA$age
 O18.nza = NZA$d18O
@@ -228,8 +227,8 @@ C13.nza.stand <- NZA.stand$C13.nza
 # Charcoal data is from the same core as tha plant macros so the 2 records should have same age.
 # However, counts of charcoal particles were made every 2 cm starting at 0.5 cm and plant macros 
 # starting at 2 cm and counted every 20 cm. I interpoletated to LD depth.
-char <- read.csv("/Users/giselleastorga/Google Drive/Lake Dobson/plant-macros/DataLD/charcoal.csv", sep =  ";")
-# char <- read.csv("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/DataLD/charcoal.csv", sep = ";")
+# char <- read.csv("/Users/giselleastorga/Google Drive/Lake Dobson/plant-macros/DataLD/charcoal.csv", sep =  ";")
+char <- read.csv("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/DataLD/charcoal.csv", sep = ";")
 head(char)
 age.char <- char$age
 age.char
@@ -247,17 +246,15 @@ char.interp <-
         rep.negt = F
     )
 head(char.interp)
-is.data.frame(char.interp)
-char.interp<- as.data.frame(char.interp)
-head(char.interp)   #only PC1
-char.interp <- char.interp$char1
+char.interp <- as.data.frame(char.interp)
 char.stand <- decostand(char.interp, method = "standardize")
+char.interp <- char.interp$char1
 char.stand <-char.stand$char1
 
 #-------------------------------Loss on Ignision interpolation-------------------------------------#
 # loi data interpolated to plant macros depth
-loi <- read.csv("/Users/giselleastorga/Google Drive/Lake Dobson/plant-macros/DataLD/loi.csv", sep = ";")
-# loi <- read.csv("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/DataLD/loi.csv",sep = ";")
+# loi <- read.csv("/Users/giselleastorga/Google Drive/Lake Dobson/plant-macros/DataLD/loi.csv", sep = ";")
+loi <- read.csv("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/DataLD/loi.csv",sep = ";")
 head(loi)
 depth.loi <- loi$depth
 age.loi <- loi$age
@@ -277,7 +274,6 @@ loi.interp <-
 head(loi.interp)
 loi.interp <- as.data.frame(loi.interp)
 loi.stand <- decostand(loi.interp, method = "standardize")
-loi.stand <- as.data.frame(loi.stand)
 loi.stand <- loi.stand$loi1
 loi.interp <- loi.interp$loi1
 
