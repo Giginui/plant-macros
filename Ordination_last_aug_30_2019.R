@@ -33,8 +33,12 @@ summary(macros5)
 macros.log <- log1p(macros5)# computes log(1+x)
 macros.sqrt <- sqrt(macros5)
 
-decorana(macros5, iweigh = 1, ira = 0)
-dca.dob <- decorana(macros.sqrt, iweigh = 1, ira = 0)
+dca.raw <- decorana(macros5, iweigh = 1, ira = 0)
+dca.raw
+dca.log <- decorana(macros.log, iweigh = 1, ira = 0)
+dca.log
+dca.sqrt <- decorana(macros.sqrt, iweigh = 1, ira = 0)
+dca.sqrt
 # DCA performed on log(raw count data). 80 samples 52 species including individual conifer abundances
 # argument ira = 0 for detrending and iweight = 1 for downweighting of rare species
 # DCA2 2.9 DCA2 2.2
@@ -44,7 +48,7 @@ dca.dob1 <- decorana(macros.log, iweigh = 1, ira = 0)
 ca.dob <- cca(macros.log)
 ca.dob$tot.chi
 
-(dca.dob$evals / 2.69518)*100
+(dca.sqrt$evals / 2.69518)*100
 
 dca1.samplescores <- scores(dca.dob, display = c("sites"), choices = 1)
 is.data.frame(dca1.samplescores)
@@ -224,7 +228,7 @@ C13.nza.stand <- NZA.stand$C13.nza
 # Charcoal data is from the same core as tha plant macros so the 2 records should have same age.
 # However, counts of charcoal particles were made every 2 cm starting at 0.5 cm and plant macros 
 # starting at 2 cm and counted every 20 cm. I interpoletated to LD depth.
-char <- read.csv("/Users/giselleastorga/Google Drive/Lake Dobson/plant-macros/DataLD/charcoal.csv")
+char <- read.csv("/Users/giselleastorga/Google Drive/Lake Dobson/plant-macros/DataLD/charcoal.csv", sep =  ";")
 # char <- read.csv("/Users/Gastorga/Google Drive/Lake Dobson/plant-macros/DataLD/charcoal.csv", sep = ";")
 head(char)
 age.char <- char$age
